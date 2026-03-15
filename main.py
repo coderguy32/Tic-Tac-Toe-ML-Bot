@@ -107,6 +107,7 @@ while True:
     print("1. Train the bot")
     print("2. Play against the bot")
     print("3. Quit")
+    print("4. Export Q-Table for web")
 
     choice = input("\nChoose an option (1-3): ").strip()
 
@@ -127,6 +128,12 @@ while True:
     elif choice == "3":
         print("Goodbye!")
         break
+    elif choice == "4":
+        print("Exporting Q-table to JSON...")
+        import json
+        with open("qtable.json", "w") as f:
+            json.dump({str(k): v for k, v in agent.q.items()}, f)
+        print("Saved to qtable.json!")
 
     else:
         print("Invalid option, please choose 1, 2, or 3.")
