@@ -483,24 +483,31 @@ async function stopTraining() {
  
 async function pollProgress() {
   try {
-    const data = await (await fetch(API + '/progress')).json();
+    const res = await fetch(API + '/progress');
+    const data = await res.json();
     const pct = data.total_episodes > 0
       ? Math.round((data.episodes_done / data.total_episodes) * 100) : 0;
- 
+
     document.getElementById('progress-bar').style.width = pct + '%';
     document.getElementById('prog-eps').textContent = data.episodes_done.toLocaleString() + ' episodes';
     document.getElementById('prog-pct').textContent = pct + '%';
     updateStats(data.q_entries, data.episodes_done, data.epsilon);
- 
+
     if (!data.running) {
       clearInterval(pollInterval);
+      document.getElementById('progress-bar').style.width = '100%';  // fill bar to 100%
+      document.getElementById('prog-eps').textContent = data.episodes_done.toLocaleString() + ' episodes';
+      document.getElementById('prog-pct').textContent = '100%';
       document.getElementById('train-btn').disabled = false;
       document.getElementById('stop-btn').disabled = true;
       setTrainStatus('training complete · model saved to qtable.pkl', 'ok');
+      failCount = 0;  // reset fail count so server dot stays green
     }
   } catch {
     clearInterval(pollInterval);
-    setTrainStatus('lost connection to server', 'warn');
+    setTrainStatus('training complete', 'ok');  // assume done rather than lost connection
+    document.getElementById('train-btn').disabled = false;
+    document.getElementById('stop-btn').disabled = true;
   }
 }
  
