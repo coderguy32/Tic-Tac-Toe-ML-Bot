@@ -37,33 +37,37 @@ def run_training(episodes):
     train_state["running"] = True
     train_state["episodes_done"] = 0
     train_state["total_episodes"] = episodes
- 
+
     for episode in range(episodes):
         if not train_state["running"]:
             break
- 
+
         state = env.reset()
         done = False
         while not done:
             actions = env.available_actions()
             action = agent.choose_action(state, actions)
             next_state, reward, done = env.step(action, 1)
- 
+
             if not done:
                 opp_action = random.choice(env.available_actions())
                 next_state, opp_reward, done = env.step(opp_action, -1)
                 if done and opp_reward == -1:
                     reward = -1
- 
+
             next_actions = env.available_actions()
             agent.update(state, action, reward, next_state, next_actions, done)
             state = next_state
- 
+
         train_state["episodes_done"] = episode + 1
         train_state["total_episodes_ever"] += 1
- 
+
+        # yield every 5000 episodes so the poll can track progress
+        if episode % 5000 == 0:
+            time.sleep(0.05)
+
     train_state["running"] = False
-    train_state["final_episodes_done"] = train_state["episodes_done"]  # add this
+    train_state["final_episodes_done"] = train_state["episodes_done"]
     save()
  
 @app.route('/')
