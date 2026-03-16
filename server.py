@@ -25,6 +25,7 @@ train_state = {
     "episodes_done": 0,
     "total_episodes": 0,
     "total_episodes_ever": 0,
+    "final_episodes_done": 0,
 }
  
 def save():
@@ -62,8 +63,8 @@ def run_training(episodes):
         train_state["total_episodes_ever"] += 1
  
     train_state["running"] = False
+    train_state["final_episodes_done"] = train_state["episodes_done"]  # add this
     save()
-    print(f"Training complete. {train_state['episodes_done']} episodes run.")
  
 @app.route('/')
 def index():
@@ -95,6 +96,7 @@ def progress():
     return jsonify({
         "running": train_state["running"],
         "episodes_done": train_state["episodes_done"],
+        "final_episodes_done": train_state["final_episodes_done"],  # add this
         "total_episodes": train_state["total_episodes"],
         "total_episodes_ever": train_state["total_episodes_ever"],
         "epsilon": round(agent.epsilon, 4),
