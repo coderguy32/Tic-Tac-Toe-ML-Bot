@@ -119,6 +119,7 @@ def stats():
         "q_entries": len(agent.q),
         "epsilon": round(agent.epsilon, 4),
         "trained": len(agent.q) > 0,
+        "total_episodes_ever": train_state["total_episodes_ever"],
     })
  
 if __name__ == '__main__':

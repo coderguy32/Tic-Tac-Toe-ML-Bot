@@ -421,7 +421,7 @@ async function checkServer() {
     failCount = 0;  // reset on success
     document.getElementById('server-dot').className = 'dot online';
     document.getElementById('server-label').textContent = 'server online';
-    updateStats(data.q_entries, null, data.epsilon);
+    updateStats(data.q_entries, data.total_episodes_ever || 0, data.epsilon);
     if (data.trained) setStatus('your-turn', 'your move (O)');
   } catch {
     failCount++;
@@ -495,13 +495,14 @@ async function pollProgress() {
 
     if (!data.running) {
       clearInterval(pollInterval);
-      document.getElementById('progress-bar').style.width = '100%';  // fill bar to 100%
+      document.getElementById('progress-bar').style.width = '100%';
       document.getElementById('prog-eps').textContent = data.episodes_done.toLocaleString() + ' episodes';
       document.getElementById('prog-pct').textContent = '100%';
+      updateStats(data.q_entries, data.episodes_done, data.epsilon);
       document.getElementById('train-btn').disabled = false;
       document.getElementById('stop-btn').disabled = true;
-      setTrainStatus('training complete · model saved to qtable.pkl', 'ok');
-      failCount = 0;  // reset fail count so server dot stays green
+      setTrainStatus('training complete · model saved', 'ok');
+      failCount = 0;
     }
   } catch {
     clearInterval(pollInterval);
@@ -510,7 +511,7 @@ async function pollProgress() {
     document.getElementById('stop-btn').disabled = true;
   }
 }
- 
+
 function setTrainStatus(msg, cls) {
   const el = document.getElementById('train-status');
   el.textContent = msg;
