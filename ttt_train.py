@@ -35,10 +35,18 @@ class QLearningAgent:
     def get_q(self, state, action):
         return self.q[(state, action)]
         
-    def choose_action(self, state, actions):
-        if random.random() < self.epsilon:
+    def choose_action(self, state, actions, greedy=False):
+        if not greedy and random.random() < self.epsilon:
             return random.choice(actions)
-        return max(actions, key=lambda a: self.get_q(state, a))
+        
+        # find the best Q value
+        best_q = max(self.get_q(state, a) for a in actions)
+        
+        # collect all actions that tie for best
+        best_actions = [a for a in actions if self.get_q(state, a) == best_q]
+        
+        # pick randomly among tied actions instead of always the first
+        return random.choice(best_actions)
         
     def update(self, state, action, reward, next_state, next_actions, done):
         future = 0 if done else max(self.get_q(next_state, a) for a in next_actions) if next_actions else 0
