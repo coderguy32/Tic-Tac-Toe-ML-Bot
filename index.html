@@ -494,19 +494,23 @@ async function pollProgress() {
     updateStats(data.q_entries, data.episodes_done, data.epsilon);
 
   if (!data.running) {
-    clearInterval(pollInterval);
-    document.getElementById('train-btn').disabled = false;
-    document.getElementById('stop-btn').disabled = true;
+  clearInterval(pollInterval);
+  document.getElementById('train-btn').disabled = false;
+  document.getElementById('stop-btn').disabled = true;
 
-    // fetch stats one more time to get the true final numbers
-    const finalData = await (await fetch(API + '/stats')).json();
-    document.getElementById('progress-bar').style.width = '100%';
-    document.getElementById('prog-pct').textContent = '100%';
-    document.getElementById('prog-eps').textContent = finalData.total_episodes_ever.toLocaleString() + ' episodes';
-    updateStats(finalData.q_entries, finalData.total_episodes_ever, finalData.epsilon);
-    setTrainStatus('training complete · model saved', 'ok');
-    failCount = 0;
-  }
+  const finalData = await (await fetch(API + '/stats')).json();
+  console.log('Final stats:', finalData); // debug line
+
+  const total = finalData.total_episodes_ever;
+  document.getElementById('progress-bar').style.width = '100%';
+  document.getElementById('prog-pct').textContent = '100%';
+  document.getElementById('prog-eps').textContent = total.toLocaleString() + ' episodes';
+  document.getElementById('stat-eps-done').textContent = total.toLocaleString();
+  document.getElementById('stat-entries').textContent = finalData.q_entries.toLocaleString();
+  document.getElementById('stat-epsilon').textContent = finalData.epsilon.toFixed(3);
+  setTrainStatus('training complete · model saved', 'ok');
+  failCount = 0;
+}
   } catch {
     clearInterval(pollInterval);
     setTrainStatus('training complete', 'ok');  // assume done rather than lost connection
