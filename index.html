@@ -482,9 +482,11 @@ async function stopTraining() {
 }
  
 async function pollProgress() {
+  console.log('polling...');
   try {
     const res = await fetch(API + '/progress');
     const data = await res.json();
+    console.log('progress data:', data);
     const pct = data.total_episodes > 0
       ? Math.round((data.episodes_done / data.total_episodes) * 100) : 0;
 
