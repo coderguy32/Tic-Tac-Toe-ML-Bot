@@ -467,7 +467,7 @@ async function startTraining() {
     document.getElementById('stop-btn').disabled = false;
     document.getElementById('progress-wrap').style.display = 'block';
     setTrainStatus('training...', '');
-    pollInterval = setInterval(pollProgress, 600);
+    pollInterval = setInterval(pollProgress, 100);
   } catch {
     setTrainStatus('cannot reach server — is python server.py running?', 'warn');
   }

@@ -70,8 +70,8 @@ def run_training(episodes):
         train_state["episodes_done"] = episode + 1
         train_state["total_episodes_ever"] += 1
 
-        # yield every 5000 episodes so the poll can track progress
-        if episode % 5000 == 0:
+        # yield every 1000 episodes so the poll can track progress
+        if episode % 1000 == 0:
             time.sleep(0.05)
 
     train_state["running"] = False
