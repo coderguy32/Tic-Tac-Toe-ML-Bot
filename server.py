@@ -14,10 +14,6 @@ CORS(app)
 env = TicTacToeEnv()
 agent = QLearningAgent()
  
-if os.path.exists("qtable.pkl"):
-    with open("qtable.pkl", "rb") as f:
-        agent.q = defaultdict(float, pickle.load(f))
-    print("Loaded saved Q-table.")
  
 
 # Training runs in a background thread so the server stays responsive
@@ -30,15 +26,21 @@ train_state = {
 }
  
 # load total episodes ever from file if it exists
-if os.path.exists("episodes.txt"):
-    with open("episodes.txt", "r") as f:
-        train_state["total_episodes_ever"] = int(f.read())
+if os.path.exists("state.pkl"):
+    with open("state.pkl", "rb") as f:
+        saved_state = pickle.load(f)
+        train_state["total_episodes_ever"] = saved_state["total_episodes_ever"]
+        agent.epsilon = saved_state["epsilon"]
+    print("Loaded saved state.")
 
 def save():
     with open("qtable.pkl", "wb") as f:
         pickle.dump(dict(agent.q), f)
-    with open("episodes.txt", "w") as f:
-        f.write(str(train_state["total_episodes_ever"]))
+    with open("state.pkl", "wb") as f:
+        pickle.dump({
+            "total_episodes_ever": train_state["total_episodes_ever"],
+            "epsilon": agent.epsilon
+        }, f)
  
 def run_training(episodes):
     agent.epsilon = 1.0
