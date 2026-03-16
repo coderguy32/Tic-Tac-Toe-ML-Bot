@@ -493,16 +493,19 @@ async function pollProgress() {
     document.getElementById('prog-pct').textContent = pct + '%';
     updateStats(data.q_entries, data.episodes_done, data.epsilon);
 
-    if (!data.running) {
-      clearInterval(pollInterval);
-      document.getElementById('progress-bar').style.width = '100%';
-      document.getElementById('prog-eps').textContent = data.final_episodes_done.toLocaleString() + ' episodes';
-      document.getElementById('prog-pct').textContent = '100%';
-      updateStats(data.q_entries, data.final_episodes_done, data.epsilon);
-      document.getElementById('train-btn').disabled = false;
-      document.getElementById('stop-btn').disabled = true;
-      setTrainStatus('training complete · model saved', 'ok');
-      failCount = 0;
+  if (!data.running) {
+    clearInterval(pollInterval);
+    document.getElementById('train-btn').disabled = false;
+    document.getElementById('stop-btn').disabled = true;
+
+    // fetch stats one more time to get the true final numbers
+    const finalData = await (await fetch(API + '/stats')).json();
+    document.getElementById('progress-bar').style.width = '100%';
+    document.getElementById('prog-pct').textContent = '100%';
+    document.getElementById('prog-eps').textContent = finalData.total_episodes_ever.toLocaleString() + ' episodes';
+    updateStats(finalData.q_entries, finalData.total_episodes_ever, finalData.epsilon);
+    setTrainStatus('training complete · model saved', 'ok');
+    failCount = 0;
   }
   } catch {
     clearInterval(pollInterval);
