@@ -412,18 +412,6 @@ function switchTab(tab) {
 }
  
 // ── Server health ────────────────────────────────────────────────────
-async function checkServer() {
-  try {
-    const data = await (await fetch(API + '/stats')).json();
-    document.getElementById('server-dot').className = 'dot online';
-    document.getElementById('server-label').textContent = 'server online · localhost:5000';
-    updateStats(data.q_entries, null, data.epsilon);
-    if (data.trained) setStatus('your-turn', 'your move (O)');
-  } catch {
-    document.getElementById('server-dot').className = 'dot offline';
-    document.getElementById('server-label').textContent = 'server offline — run: python server.py';
-  }
-}
 
 let failCount = 0;
 
@@ -443,6 +431,20 @@ async function checkServer() {
     }
   }
 }
+
+async function checkServer() {
+  try {
+    const data = await (await fetch(API + '/stats')).json();
+    document.getElementById('server-dot').className = 'dot online';
+    document.getElementById('server-label').textContent = 'server online';
+    updateStats(data.q_entries, null, data.epsilon);
+    if (data.trained) setStatus('your-turn', 'your move (O)');
+  } catch {
+    document.getElementById('server-dot').className = 'dot offline';
+    document.getElementById('server-label').textContent = 'server offline';
+  }
+}
+
  
 // ── Training ─────────────────────────────────────────────────────────
 let pollInterval = null;
