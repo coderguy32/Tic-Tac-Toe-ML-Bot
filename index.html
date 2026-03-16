@@ -418,14 +418,14 @@ let failCount = 0;
 async function checkServer() {
   try {
     const data = await (await fetch(API + '/stats')).json();
-    failCount = 0;  // reset on success
+    failCount = 0;
     document.getElementById('server-dot').className = 'dot online';
     document.getElementById('server-label').textContent = 'server online';
-    updateStats(data.q_entries, data.total_episodes_ever || 0, data.epsilon);
-    if (data.trained) setStatus('your-turn', 'your move (O)');
+    updateStats(data.q_entries, data.total_episodes_ever, data.epsilon);
+    if (data.trained && !gameStarted) setStatus('your-turn', 'your move (O)');
   } catch {
     failCount++;
-    if (failCount >= 3) {  // only show offline after 3 consecutive failures
+    if (failCount >= 3) {
       document.getElementById('server-dot').className = 'dot offline';
       document.getElementById('server-label').textContent = 'server offline';
     }

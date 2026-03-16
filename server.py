@@ -19,6 +19,11 @@ if os.path.exists("qtable.pkl"):
         agent.q = defaultdict(float, pickle.load(f))
     print("Loaded saved Q-table.")
  
+# load total episodes ever from file if it exists
+if os.path.exists("episodes.txt"):
+    with open("episodes.txt", "r") as f:
+        train_state["total_episodes_ever"] = int(f.read())
+
 # Training runs in a background thread so the server stays responsive
 train_state = {
     "running": False,
@@ -31,6 +36,8 @@ train_state = {
 def save():
     with open("qtable.pkl", "wb") as f:
         pickle.dump(dict(agent.q), f)
+    with open("episodes.txt", "w") as f:
+        f.write(str(train_state["total_episodes_ever"]))
  
 def run_training(episodes):
     agent.epsilon = 1.0
