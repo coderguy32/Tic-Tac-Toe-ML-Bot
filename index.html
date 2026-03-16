@@ -424,6 +424,25 @@ async function checkServer() {
     document.getElementById('server-label').textContent = 'server offline — run: python server.py';
   }
 }
+
+let failCount = 0;
+
+async function checkServer() {
+  try {
+    const data = await (await fetch(API + '/stats')).json();
+    failCount = 0;  // reset on success
+    document.getElementById('server-dot').className = 'dot online';
+    document.getElementById('server-label').textContent = 'server online';
+    updateStats(data.q_entries, null, data.epsilon);
+    if (data.trained) setStatus('your-turn', 'your move (O)');
+  } catch {
+    failCount++;
+    if (failCount >= 3) {  // only show offline after 3 consecutive failures
+      document.getElementById('server-dot').className = 'dot offline';
+      document.getElementById('server-label').textContent = 'server offline';
+    }
+  }
+}
  
 // ── Training ─────────────────────────────────────────────────────────
 let pollInterval = null;
