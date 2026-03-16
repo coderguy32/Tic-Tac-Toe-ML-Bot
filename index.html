@@ -491,7 +491,7 @@ function setTrainStatus(msg, cls) {
  
 function updateStats(entries, epsDone, epsilon) {
   if (entries  !== null && entries  !== undefined) document.getElementById('stat-entries').textContent  = entries.toLocaleString();
-  if (epsDone  !== null && epsDone  !== undefined) document.getElementById('stat-eps-done').textContent = epsDone.toLocaleString();
+  if (epsDone  !== null && epsDone  !== undefined) document.getElementById('stat-eps-done').textContent = (data.total_episodes_ever || epsDone).toLocaleString();
   if (epsilon  !== null && epsilon  !== undefined) document.getElementById('stat-epsilon').textContent  = epsilon.toFixed(3);
 }
  

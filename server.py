@@ -24,6 +24,7 @@ train_state = {
     "running": False,
     "episodes_done": 0,
     "total_episodes": 0,
+    "total_episodes_ever": 0,
 }
  
 def save():
@@ -58,6 +59,7 @@ def run_training(episodes):
             state = next_state
  
         train_state["episodes_done"] = episode + 1
+        train_state["total_episodes_ever"] += 1
  
     train_state["running"] = False
     save()
@@ -94,6 +96,7 @@ def progress():
         "running": train_state["running"],
         "episodes_done": train_state["episodes_done"],
         "total_episodes": train_state["total_episodes"],
+        "total_episodes_ever": train_state["total_episodes_ever"],
         "epsilon": round(agent.epsilon, 4),
         "q_entries": len(agent.q),
     })
