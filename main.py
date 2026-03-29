@@ -107,7 +107,6 @@ while True:
     print("1. Train the bot")
     print("2. Play against the bot")
     print("3. Quit")
-    print("4. Export Q-Table for web")
 
     choice = input("\nChoose an option (1-3): ").strip()
 

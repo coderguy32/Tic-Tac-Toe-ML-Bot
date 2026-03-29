@@ -16,7 +16,7 @@ class TicTacToeEnv:
             if self.board[a] == self.board[b] == self.board[c] != 0:
                 return self.board[a]
         return None
-    
+
     def step(self, action, player):
         self.board[action] = player
         winner = self.check_winner()
@@ -53,6 +53,27 @@ class QLearningAgent:
         self.q[(state, action)] += self.alpha * (reward + self.gamma * future - self.get_q(state, action))
         self.epsilon = max(0.01, self.epsilon * self.epsilon_decay)
 
+def smart_opponent_move(board, env):
+    actions = [i for i, v in enumerate(board) if v == 0]
+    
+    # take the win if available
+    for a in actions:
+        board[a] = -1
+        env.board = board
+        if env.check_winner():
+            board[a] = 0
+            return a
+        board[a] = 0
+    
+    # block the bot from winning
+    for a in actions:
+        board[a] = 1
+        env.board = board
+        if env.check_winner():
+            board[a] = 0
+            return a
+        board[a] = 0
+
 if __name__ == "__main__":  # training only runs when you execute train.py directly
     env = TicTacToeEnv()
     agent = QLearningAgent()
@@ -66,11 +87,11 @@ if __name__ == "__main__":  # training only runs when you execute train.py direc
             next_state, reward, done = env.step(action, 1)
 
             if not done:
-                opp_action = random.choice(env.available_actions())
+                opp_action = smart_opponent_move(list(env.board), env)
                 next_state, opp_reward, done = env.step(opp_action, -1)
                 if done and opp_reward == -1:
                     reward = -1
-            
+
             next_actions = env.available_actions()
             agent.update(state, action, reward, next_state, next_actions, done)
             state = next_state
