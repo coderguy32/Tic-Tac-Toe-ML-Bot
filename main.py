@@ -2,7 +2,7 @@ import pickle
 import random
 import os
 from collections import defaultdict
-from ttt_train import TicTacToeEnv, QLearningAgent
+from ttt_train import TicTacToeEnv, QLearningAgent, smart_opponent_move
 
 env = TicTacToeEnv()
 agent = QLearningAgent()
@@ -21,7 +21,7 @@ def save():
     print("Bot saved.")
 
 def train(episodes):
-    agent.epsilon = 1.0  # reset exploration for training
+    agent.epsilon = 1.0
     print(f"Training for {episodes} episodes...")
     for episode in range(episodes):
         state = env.reset()
@@ -32,7 +32,7 @@ def train(episodes):
             next_state, reward, done = env.step(action, 1)
 
             if not done:
-                opp_action = random.choice(env.available_actions())
+                opp_action = smart_opponent_move(list(env.board), env)  # changed
                 next_state, opp_reward, done = env.step(opp_action, -1)
                 if done and opp_reward == -1:
                     reward = -1
@@ -41,7 +41,7 @@ def train(episodes):
             agent.update(state, action, reward, next_state, next_actions, done)
             state = next_state
 
-        if (episode + 1) % (episodes // 10) == 0:  # progress every 10%
+        if (episode + 1) % (episodes // 10) == 0:
             print(f"  {episode + 1}/{episodes} episodes done...")
 
     print("Training complete!")

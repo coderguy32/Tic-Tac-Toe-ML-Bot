@@ -64,7 +64,9 @@ def smart_opponent_move(board, env):
             board[a] = 0
             return a
         board[a] = 0
-    
+
+    return random.choice(actions)
+
     # block the bot from winning
     for a in actions:
         board[a] = 1
